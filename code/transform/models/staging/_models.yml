@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: stg_ae_data
+    description: >
+      Cleaned A&E attendance and emergency admissions data: renamed columns,
+      the national TOTAL summary row dropped, and period parsed into a date.
+    columns:
+      - name: period
+        tests:
+          - not_null
+      - name: org_code
+        tests:
+          - not_null
+      - name: period_date
+        tests:
+          - not_null

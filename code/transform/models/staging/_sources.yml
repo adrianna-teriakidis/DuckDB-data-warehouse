@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: main
+    tables:
+      - name: ae_data
+        description: >
+          Raw NHS England A&E attendance and emergency admissions data,
+          loaded directly from monthly CSV files via load_raw_data.py with
+          no transformation applied.

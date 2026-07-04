@@ -14,6 +14,9 @@ A personal project to build a fully open source, self-hosted data warehouse stac
 - Python 3.12+
 - Git
 
+## Data Sources
+NHS A&E data: https://www.england.nhs.uk/statistics/statistical-work-areas/ae-waiting-times-and-activity/
+
 ## Installation
 
 1. Clone the repository

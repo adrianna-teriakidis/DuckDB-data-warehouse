@@ -14,23 +14,26 @@ def find_project_root(start: Path) -> Path:
 
 
 PROJECT_ROOT = find_project_root(Path(__file__).resolve().parent) #get the folder of the current file in full
-RAW_DATA_ROOT = PROJECT_ROOT / "raw data" 
-DB_PATH = PROJECT_ROOT / "database" / "nhs_data.duckdb"
+RAW_DATA_ROOT = PROJECT_ROOT / "raw data"
+DB_PATHS = {
+    "prod": PROJECT_ROOT / "database" / "nhs_data.duckdb",
+    "dev": PROJECT_ROOT / "database" / "nhs_data_dev.duckdb",
+}
 
 
-def load_domain(domain: str):
+def load_domain(domain: str, target: str):
     domain_folder = RAW_DATA_ROOT / domain
-    csv_glob = str(domain_folder / "*.csv") 
+    csv_glob = str(domain_folder / "*.csv")
 
-    con = duckdb.connect(str(DB_PATH))
+    con = duckdb.connect(str(DB_PATHS[target]))
     con.execute(
-        #this will concatenate all the csvs in the folder into one file. 
+        #this will concatenate all the csvs in the folder into one file.
         # It requires that every CSV in the folder has the same format or it will error.
         f'CREATE OR REPLACE TABLE "{domain}" AS '
-        f"SELECT * FROM read_csv_auto('{csv_glob}')"  
+        f"SELECT * FROM read_csv_auto('{csv_glob}')"
     )
     count = con.execute(f'SELECT COUNT(*) FROM "{domain}"').fetchone()[0]
-    print(f"Loaded {count} rows into {domain}") #might want to print other things here in future
+    print(f"Loaded {count} rows into {domain} ({target})") #might want to print other things here in future
     con.close()
 
 
@@ -40,5 +43,11 @@ if __name__ == "__main__":
         "domain",
         help="Name of the raw data subfolder to load (also used as the table name)",
     )
+    parser.add_argument(
+        "--target",
+        choices=sorted(DB_PATHS),
+        default="dev",
+        help="Which database to load into (default: dev)",
+    )
     args = parser.parse_args()
-    load_domain(args.domain)
+    load_domain(args.domain, args.target)
