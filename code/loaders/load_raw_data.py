@@ -28,9 +28,11 @@ def load_domain(domain: str, target: str):
     con = duckdb.connect(str(DB_PATHS[target]))
     con.execute(
         #this will concatenate all the csvs in the folder into one file.
-        # It requires that every CSV in the folder has the same format or it will error.
+        # union_by_name aligns columns by name across files instead of position,
+        # filling NULL for any column a given file doesn't have (e.g. older files
+        # missing the booked-appointments columns, or using different header wording).
         f'CREATE OR REPLACE TABLE "{domain}" AS '
-        f"SELECT * FROM read_csv_auto('{csv_glob}')"
+        f"SELECT * FROM read_csv_auto('{csv_glob}', union_by_name=true)"
     )
     count = con.execute(f'SELECT COUNT(*) FROM "{domain}"').fetchone()[0]
     print(f"Loaded {count} rows into {domain} ({target})") #might want to print other things here in future

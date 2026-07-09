@@ -15,7 +15,8 @@ A personal project to build a fully open source, self-hosted data warehouse stac
 - Git
 
 ## Data Sources
-NHS A&E data: https://www.england.nhs.uk/statistics/statistical-work-areas/ae-waiting-times-and-activity/
+ - NHS A&E data: https://www.england.nhs.uk/statistics/statistical-work-areas/ae-waiting-times-and-activity/
+  - Column definitions: https://www.england.nhs.uk/statistics/wp-content/uploads/sites/2/2025/11/AE-Attendances-Emergency-Definitions-v5.0-final-August-2020.pdf
 
 ## Installation
 
