@@ -5,3 +5,6 @@ pandas==3.0.3
 python-dateutil==2.9.0.post0
 requests==2.32.3
 six==1.17.0
+dbt-core==1.11.12
+dbt-duckdb==1.10.1
+

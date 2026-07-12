@@ -1,6 +1,7 @@
 with stg as (
 
     select * from {{ ref('stg_ae_data') }}
+    where has_ae_attendance_data
 
 ),
 
@@ -12,6 +13,9 @@ admissions as (
         org_code,
         org_name,
         parent_org,
+        emergency_admissions_type_1,
+        emergency_admissions_type_2,
+        emergency_admissions_other,
         emergency_admissions_type_1
             + emergency_admissions_type_2
             + emergency_admissions_other as total_emergency_admissions,

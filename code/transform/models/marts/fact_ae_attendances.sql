@@ -1,6 +1,7 @@
 with stg as (
 
     select * from {{ ref('stg_ae_data') }}
+    where has_ae_attendance_data
 
 ),
 
