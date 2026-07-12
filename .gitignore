@@ -1,5 +1,5 @@
-# Database files
-database/
+# Database files (keep the folder itself tracked via database/.gitkeep)
+database/*.duckdb*
 
 # Log output
 logs/
