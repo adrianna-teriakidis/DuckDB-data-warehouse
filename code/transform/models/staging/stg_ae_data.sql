@@ -43,6 +43,31 @@ renamed as (
     -- so compare case-insensitively rather than to the exact string "TOTAL"
     where upper(trim("Org Code")) != 'TOTAL'
 
+),
+
+final as (
+
+    select
+        *,
+        -- flags every row belonging to an org that has real A&E attendance
+        -- activity somewhere in its history, as opposed to an org that only
+        -- ever appears with all-zero figures (e.g. some GP/OOH providers).
+        -- summed across all of the org's rows (no ORDER BY -> whole-partition
+        -- frame, not a running total) - used by dim_org to exclude orgs that
+        -- never have any. each term is coalesced individually rather than
+        -- wrapping the whole sum, since pre-2019 rows have real NULL booked-
+        -- appointment columns and NULL would otherwise poison the whole
+        -- row's addition, silently dropping real attendance figures from it
+        sum(
+            coalesce(ae_attendances_type_1, 0)
+            + coalesce(ae_attendances_type_2, 0)
+            + coalesce(ae_attendances_other, 0)
+            + coalesce(ae_attendances_booked_type_1, 0)
+            + coalesce(ae_attendances_booked_type_2, 0)
+            + coalesce(ae_attendances_booked_other, 0)
+        ) over (partition by org_code) > 0 as has_ae_attendance_data
+    from renamed
+
 )
 
-select * from renamed
+select * from final
