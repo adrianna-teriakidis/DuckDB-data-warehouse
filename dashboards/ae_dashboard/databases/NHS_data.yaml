@@ -1,0 +1,18 @@
+database_name: NHS_data
+sqlalchemy_uri: duckdb:////app/nhs_data/nhs_data.duckdb?access_mode=read_only
+cache_timeout: null
+expose_in_sqllab: true
+allow_run_async: false
+allow_ctas: false
+allow_cvas: false
+allow_dml: false
+allow_file_upload: false
+extra:
+  metadata_params: {}
+  engine_params: {}
+  metadata_cache_timeout: {}
+  schemas_allowed_for_file_upload: []
+impersonate_user: false
+configuration_method: sqlalchemy_form
+uuid: 3d8c7539-6f92-4e1f-a8bc-5056d3ad6715
+version: 1.0.0

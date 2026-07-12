@@ -1,0 +1,217 @@
+table_name: A&E Flow most recent data
+main_dttm_col: period_date
+currency_code_column: null
+description: null
+default_endpoint: null
+offset: 0
+cache_timeout: null
+catalog: null
+schema: nhs_data.main
+sql: 'WITH latest_period AS (
+
+  SELECT max(period_date) max_date
+
+  FROM fact_ae_attendances
+
+  )
+
+
+  SELECT period_date,
+
+  CONCAT(dim_org.current_org_name,''['',dim_org.org_code,'']'') Org,
+
+  current_parent_org,
+
+  booked as Source,
+
+  type as Target,
+
+  sum(attendances) as Value
+
+  FROM fact_ae_attendances
+
+  INNER JOIN dim_org on fact_ae_attendances.org_code = dim_org.org_code
+
+  CROSS JOIN latest_period
+
+  WHERE period_date = latest_period.max_date
+
+  GROUP BY period_date,
+
+  CONCAT(dim_org.current_org_name,''['',dim_org.org_code,'']''),
+
+  current_parent_org,
+
+  booked,
+
+  type
+
+
+  UNION ALL
+
+
+  SELECT period_date,
+
+  CONCAT(dim_org.current_org_name,''['',dim_org.org_code,'']''),
+
+  current_parent_org,
+
+  type as Source,
+
+  ''Over 4 hrs'' as Target,
+
+  sum(attendances_over_4hrs) as Value
+
+  FROM fact_ae_attendances
+
+  INNER JOIN dim_org on fact_ae_attendances.org_code = dim_org.org_code
+
+  CROSS JOIN latest_period
+
+  WHERE period_date = latest_period.max_date
+
+  GROUP BY period_date,
+
+  CONCAT(dim_org.current_org_name,''['',dim_org.org_code,'']''),
+
+  current_parent_org,
+
+  type
+
+
+  UNION ALL
+
+
+  SELECT period_date,
+
+  CONCAT(dim_org.current_org_name,''['',dim_org.org_code,'']''),
+
+  current_parent_org,
+
+  type as Source,
+
+  ''Within 4 hrs'' as Target,
+
+  sum(attendances) - sum(attendances_over_4hrs) as Value
+
+  FROM fact_ae_attendances
+
+  INNER JOIN dim_org on fact_ae_attendances.org_code = dim_org.org_code
+
+  CROSS JOIN latest_period
+
+  WHERE period_date = latest_period.max_date
+
+  GROUP BY period_date,
+
+  CONCAT(dim_org.current_org_name,''['',dim_org.org_code,'']''),
+
+  current_parent_org,
+
+  type'
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+folders: []
+uuid: c258b3a1-5136-4529-bafb-7bcba926be06
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra:
+    warning_markdown: ''
+  warning_text: null
+columns:
+- column_name: period_date
+  verbose_name: null
+  is_dttm: true
+  is_active: true
+  type: DATETIME
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra:
+    warning_markdown: null
+- column_name: Source
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra:
+    warning_markdown: null
+- column_name: Target
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra:
+    warning_markdown: null
+- column_name: current_parent_org
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra:
+    warning_markdown: null
+- column_name: Value
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: INT
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra:
+    warning_markdown: null
+- column_name: Org
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: null
+  description: null
+  python_date_format: null
+  datetime_format: null
+  extra: null
+version: 1.0.0
+database_uuid: 3d8c7539-6f92-4e1f-a8bc-5056d3ad6715
